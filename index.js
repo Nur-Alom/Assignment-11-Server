@@ -8,7 +8,6 @@ const port = process.env.PORT || 5000;
 const app = express();
 
 // Middleware.
-
 app.use(cors());
 app.use(express.json());
 
@@ -22,6 +21,8 @@ async function run() {
         const database = client.db('explore-bd');
         const serviceCollection = database.collection('services');
         const orderCollection = database.collection('ordersItem');
+
+        // Services API Option.
 
         // Get Services API
         app.get('/services', async (req, res) => {
@@ -37,6 +38,9 @@ async function run() {
             res.json(singleItem);
         });
 
+
+        // Order API Options.
+
         // Post Orders
         app.post('/ordersItem', async (req, res) => {
             const order = req.body;
@@ -49,14 +53,6 @@ async function run() {
             const allOrders = await orderCollection.find({}).toArray();
             res.json(allOrders);
         });
-
-        // Get current user orders.
-        // app.get('/ordersItem/:id', async (req, res) => {
-        //     console.log('hello', req?.email);
-        //     // const email = { email: req.params.id };
-        //     // const currentOrder = await orderCollection.find(email)
-        //     res.send('all ok');
-        // });
 
         // Delete Order
         app.delete('/ordersItem/:id', async (req, res) => {
