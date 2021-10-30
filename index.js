@@ -21,6 +21,7 @@ async function run() {
         await client.connect();
         const database = client.db('explore-bd');
         const serviceCollection = database.collection('services');
+        const orderCollection = database.collection('ordersItem');
 
         // Get Services API
         app.get('/services', async (req, res) => {
@@ -31,10 +32,38 @@ async function run() {
         // Get Single Service
         app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
-            console.log('we get id no:', id);
             const query = { _id: ObjectId(id) };
             const singleItem = await serviceCollection.findOne(query);
             res.json(singleItem);
+        });
+
+        // Post Orders
+        app.post('/ordersItem', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order)
+            res.json(result)
+        });
+
+        // Get user Orders
+        app.get('/ordersItem', async (req, res) => {
+            const allOrders = await orderCollection.find({}).toArray();
+            res.json(allOrders);
+        });
+
+        // Get current user orders.
+        // app.get('/ordersItem/:id', async (req, res) => {
+        //     console.log('hello', req?.email);
+        //     // const email = { email: req.params.id };
+        //     // const currentOrder = await orderCollection.find(email)
+        //     res.send('all ok');
+        // });
+
+        // Delete Order
+        app.delete('/ordersItem/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
+            res.json(result);
         })
 
     }
