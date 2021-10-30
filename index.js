@@ -22,12 +22,19 @@ async function run() {
         const serviceCollection = database.collection('services');
         const orderCollection = database.collection('ordersItem');
 
-        // Services API Option.
+        // Services API Options.
 
         // Get Services API
         app.get('/services', async (req, res) => {
             const services = await serviceCollection.find({}).toArray();
             res.json(services);
+        });
+
+        // Post New Added Data/services.
+        app.post('/services', async (req, res) => {
+            const newData = req.body;
+            const result = await serviceCollection.insertOne(newData);
+            res.json(result)
         });
 
         // Get Single Service
