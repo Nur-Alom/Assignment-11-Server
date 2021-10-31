@@ -51,7 +51,7 @@ async function run() {
         // Post Orders
         app.post('/ordersItem', async (req, res) => {
             const order = req.body;
-            const result = await orderCollection.insertOne(order)
+            const result = await orderCollection.insertOne(order);
             res.json(result)
         });
 
@@ -59,6 +59,21 @@ async function run() {
         app.get('/ordersItem', async (req, res) => {
             const allOrders = await orderCollection.find({}).toArray();
             res.json(allOrders);
+        });
+
+        // Update order Status.
+        app.put('/ordersItem/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateStatus = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    status: updateStatus.status
+                },
+            };
+            const result = await orderCollection.updateOne(filter, updateDoc);
+            console.log(id)
+            res.send(result);
         });
 
         // Delete Order
