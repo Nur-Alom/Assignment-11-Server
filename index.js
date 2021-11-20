@@ -3,6 +3,7 @@ const cors = require('cors');
 const { MongoClient } = require('mongodb');
 require("dotenv").config();
 const ObjectId = require("mongodb").ObjectId;
+const fileUplod = require('express-fileupload');
 
 const port = process.env.PORT || 5000;
 const app = express();
@@ -10,6 +11,7 @@ const app = express();
 // Middleware.
 app.use(cors());
 app.use(express.json());
+app.use(fileUplod());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.zqb2d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 
@@ -32,8 +34,24 @@ async function run() {
 
         // Post New Added Data/services.
         app.post('/services', async (req, res) => {
-            const newData = req.body;
-            const result = await serviceCollection.insertOne(newData);
+            const title = req.body.title;
+            const price = req.body.price;
+            const shortDis = req.body.dis;
+            const Location = req.body.location;
+            const tourTime = req.body.tTime;
+            const pic = req.files.image;
+            const picData = pic.data;
+            const encodedPic = picData.toString('base64')
+            const imageBuffer = Buffer.from(encodedPic, 'base64');
+            const service = {
+                title,
+                price,
+                Location,
+                tourTime,
+                shortDis,
+                img: imageBuffer
+            }
+            const result = await serviceCollection.insertOne(service);
             res.json(result)
         });
 
